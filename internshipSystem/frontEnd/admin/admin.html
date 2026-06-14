@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Global Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Unified Sidebar Navigation -->
+        <aside class="sidebar">
+            <h2>InternTrack</h2>
+            <div class="user-profile">
+                <p class="profile-name">System Administrator</p>
+                <span class="profile-role">Root Access</span>
+            </div>
+            <nav>
+                <a href="#" class="active">Overview</a>
+                <a href="#">User Accounts</a>
+                <a href="#">System Controls</a>
+                <a href="../user/user.html" class="logout-btn">Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Dashboard Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <div>
+                    <h1>System Administration</h1>
+                    <p>Monitor platform statistics and manage core user roles.</p>
+                </div>
+            </header>
+
+            <!-- Unified Analytics Metrics Panel -->
+            <section class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Total Users</h3>
+                    <p class="metric-number">184</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Active Supervisors</h3>
+                    <p class="metric-number">12</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Active Internships</h3>
+                    <p class="metric-number">64</p>
+                </div>
+            </section>
+
+            <!-- User Verification / System Management Queue -->
+            <section class="table-section">
+                <h2>Pending User Approvals</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Requested Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="user-row-1">
+                                <td class="student-name">Marcus Vance</td>
+                                <td>marcus@university.edu</td>
+                                <td><span class="role-badge badge-student">Student</span></td>
+                                <td>
+                                    <button class="btn btn-approve" onclick="approveUser(1)">Approve</button>
+                                    <button class="btn btn-delete" onclick="denyUser(1)">Deny</button>
+                                </td>
+                            </tr>
+                            <tr id="user-row-2">
+                                <td class="student-name">Prof. Alan Turing</td>
+                                <td>turing.a@university.edu</td>
+                                <td><span class="role-badge badge-sv">Supervisor</span></td>
+                                <td>
+                                    <button class="btn btn-approve" onclick="approveUser(2)">Approve</button>
+                                    <button class="btn btn-delete" onclick="denyUser(2)">Deny</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Frontend Interactive Simulation Script -->
+    <script>
+        function approveUser(id) {
+            alert("User account verified and activated successfully.");
+            document.getElementById(`user-row-${id}`).remove();
+        }
+
+        function denyUser(id) {
+            if (confirm("Are you sure you want to reject this account registration request?")) {
+                document.getElementById(`user-row-${id}`).remove();
+            }
+        }
+    </script>
+</body>
+</html>
