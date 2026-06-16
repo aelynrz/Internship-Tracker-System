@@ -9,11 +9,11 @@ $_SESSION['Name'] = 'Admin User';
 
 // Security Check
 if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
-    // header("Location: login.php");
+    header("Location: admin_login.php");
     // exit();
 }
 
-// require_once 'db_connect.php'; // Uncomment when ready to fetch real data
+require_once 'db_connect.php'; // Uncomment when ready to fetch real data
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
         </ul>
         <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
             <li class="nav-item"><a href="#" class="nav-link">Settings</a></li>
-            <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
+            <li class="nav-item"><a href="logout_admin.php" class="nav-link">Log out</a></li>
         </div>
     </aside>
 

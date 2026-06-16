@@ -10,21 +10,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
-    $role = $_POST['role'];
+    
+    // New Student Fields
+    $matric = trim($_POST['matric']);
+    $cgpa = floatval($_POST['cgpa']);
+    $major = trim($_POST['major']);
 
-    if (empty($name) || empty($email) || empty($password) || empty($role)) {
-        $error = "All fields are required.";
+    if (empty($name) || empty($email) || empty($password) || empty($matric)) {
+        $error = "Name, Email, Password, and Matric Number are required.";
     } else {
-        // Hash the password for security
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("ssss", $name, $email, $hashed_password, $role);
+        // Notice we hardcode the role as 'Student' here
+        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, MatricNumber, CGPA, Major) VALUES (?, ?, ?, 'Student', ?, ?, ?)");
+        // "ssssds" means: string, string, string, string, double/decimal, string
+        $stmt->bind_param("ssssds", $name, $email, $hashed_password, $matric, $cgpa, $major);
 
         if ($stmt->execute()) {
             $success = "Registration successful! You can now login.";
         } else {
-            $error = "Registration failed. Email might already exist.";
+            $error = "Registration failed. Email or Matric Number might already exist.";
         }
         $stmt->close();
     }
@@ -34,15 +39,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Register - Internship Tracker</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Student Registration - Internship Tracker</title>
     <style>
-        .auth-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--bg-color); }
-        .auth-card { background: white; padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { margin: 0; padding: 0; }
+        .auth-container { 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100%; 
+            background-image: url('assets/images/background.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;
+            padding: 20px;
+        }
+        .auth-card { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); outline: none; }
-        .btn-primary { width: 100%; padding: 12px; background: var(--accent-dark); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 12px; outline: none; }
+        .btn-primary { width: 100%; padding: 12px; background: #1e1e1e; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; margin-top: 10px; }
         .alert { padding: 10px; margin-bottom: 20px; border-radius: 8px; font-size: 14px; }
         .alert-error { background: #ffebee; color: #c62828; }
         .alert-success { background: #e8f5e9; color: #2e7d32; }
@@ -51,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="auth-container">
         <div class="auth-card">
-            <h2 style="margin-bottom: 20px; text-align: center;">Create Account</h2>
+            <h2 style="margin-bottom: 5px; text-align: center;">Student Portal</h2>
+            <p style="text-align: center; color: #7a7a7a; margin-bottom: 25px; font-size: 14px;">Register for your internship account</p>
             
             <?php if($error) echo "<div class='alert alert-error'>$error</div>"; ?>
             <?php if($success) echo "<div class='alert alert-success'>$success</div>"; ?>
@@ -61,6 +74,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Full Name</label>
                     <input type="text" name="name" class="form-control" required>
                 </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Matriks Number</label>
+                        <input type="text" name="matric" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CGPA</label>
+                        <input type="number" step="0.01" min="0" max="4.00" name="cgpa" class="form-control" placeholder="e.g. 3.75">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Major / Course</label>
+                    <input type="text" name="major" class="form-control" placeholder="e.g. Computer Science">
+                </div>
+
                 <div class="form-group">
                     <label>Email Address</label>
                     <input type="email" name="email" class="form-control" required>
@@ -69,18 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label>Password</label>
                     <input type="password" name="password" class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label>I am a...</label>
-                    <select name="role" class="form-control" required>
-                        <option value="Student">Student</option>
-                        <option value="Supervisor">Company Supervisor</option>
-                        <option value="Admin">Administrator</option>
-                    </select>
-                </div>
+                
                 <button type="submit" class="btn-primary">Register</button>
             </form>
             <p style="text-align: center; margin-top: 20px; font-size: 14px;">
-                Already have an account? <a href="login.php" style="color: var(--accent-dark);">Log in here</a>
+                Already have an account? <a href="login.php" style="color: #1e1e1e;">Log in here</a>
             </p>
         </div>
     </div>

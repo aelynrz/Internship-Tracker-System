@@ -4,7 +4,7 @@ session_start();
 require_once 'db_connect.php';
 
 if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
-    header("Location: login.php");
+    header("Location: admin_login.php");
     exit();
 }
 
@@ -37,7 +37,7 @@ $result = $conn->query($query);
             <li class="nav-item"><a href="admin_applications.php" class="nav-link active">Applications</a></li>
         </ul>
         <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
-            <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
+            <li class="nav-item"><a href="logout_admin.php" class="nav-link">Log out</a></li>
         </div>
     </aside>
 
