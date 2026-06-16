@@ -1,0 +1,87 @@
+<?php
+// admin_applications.php
+session_start();
+require_once 'db_connect.php';
+
+if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
+
+// Complex JOIN to get readable names instead of just ID numbers
+$query = "
+    SELECT a.ApplicationID, u.Name AS StudentName, c.CompanyName, a.Status, a.SubmissionDate 
+    FROM Application a
+    JOIN User u ON a.StudentID = u.UserID
+    JOIN Company c ON a.CompanyID = c.CompanyID
+    ORDER BY a.SubmissionDate DESC
+";
+$result = $conn->query($query);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Applications - Admin</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">InternTrack</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="admin_dashboard.php" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="admin_users.php" class="nav-link">Users</a></li>
+            <li class="nav-item"><a href="admin_companies.php" class="nav-link">Companies</a></li>
+            <li class="nav-item"><a href="admin_applications.php" class="nav-link active">Applications</a></li>
+        </ul>
+        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+            <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <h1 class="page-title">All Applications</h1>
+        </header>
+
+        <section class="data-section">
+            <h2 class="section-title">System-wide Submissions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>App ID</th>
+                        <th>Student Name</th>
+                        <th>Target Company</th>
+                        <th>Date Submitted</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) { 
+                            // Determine badge color based on status
+                            $statusClass = strtolower($row['Status']);
+                    ?>
+                    <tr>
+                        <td>#APP-<?php echo htmlspecialchars($row['ApplicationID']); ?></td>
+                        <td><?php echo htmlspecialchars($row['StudentName']); ?></td>
+                        <td><?php echo htmlspecialchars($row['CompanyName']); ?></td>
+                        <td><?php echo date('d M Y', strtotime($row['SubmissionDate'])); ?></td>
+                        <td><span class="status-badge <?php echo $statusClass; ?>"><?php echo htmlspecialchars($row['Status']); ?></span></td>
+                    </tr>
+                    <?php 
+                        }
+                    } else {
+                        echo "<tr><td colspan='5'>No applications found yet.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+</body>
+</html>
