@@ -69,9 +69,31 @@ Follow these steps to run the project locally using XAMPP.
 
 ---
 
-## 1. Clone the Repository
+## 1. Open Command Prompt
 
-Clone this project into your XAMPP `htdocs` folder.
+Press **`Win + R`**, type:
+
+```text
+cmd
+```
+
+and press **Enter**.
+
+---
+
+## 2. Navigate to XAMPP `htdocs`
+
+In Command Prompt, type:
+
+```bash
+cd C:\xampp\htdocs
+```
+
+---
+
+## 3. Clone the Repository
+
+Clone the project into the `htdocs` folder:
 
 ```bash
 git clone https://github.com/aelynrz/Internship-Tracker-System.git
@@ -79,67 +101,88 @@ git clone https://github.com/aelynrz/Internship-Tracker-System.git
 
 ---
 
-## 2. Start the Local Server
+## 4. Open the Project in VS Code
 
-Open the **XAMPP Control Panel** and start:
+Move into the project folder:
 
-- ✅ Apache
-- ✅ MySQL
+```bash
+cd Internship-Tracker-System
+```
+
+Then open it with Visual Studio Code:
+
+```bash
+code .
+```
+
+> **Note:** Make sure VS Code is installed and the `code` command is enabled.
 
 ---
 
-## 3. Database Setup via `reset_db.php` (Highly Recommended!)
+## 5. Start XAMPP
 
-> **No need to manually import an SQL file!**
+Open the **XAMPP Control Panel** and click **Start** for:
 
-This project includes an automated database seeder designed for rapid testing and grading.
+* ✅ **Apache**
+* ✅ **MySQL**
 
-### Step 1: Create an Empty Database
+Both modules should turn green when running successfully.
 
-Open **phpMyAdmin** and create a database named:
+---
+
+## 6. Create the Database
+
+Open your browser and go to:
+
+```text
+http://localhost/phpmyadmin/
+```
+
+1. Click **New**.
+2. Create a database named:
 
 ```text
 internship_tracker
 ```
 
-### Step 2: Run the Reset Script
-
-Open your browser and visit:
-
-```
-http://localhost/Internship-Tracker-System/reset_db.php
-```
-
-🎉 **Boom!**
-
-The script will automatically:
-
-- Generate all required tables.
-- Securely hash passwords.
-- Insert:
-
-  - 👨‍🎓 5 Students
-  - 🏢 10 S&P 500 Companies
-  - 👔 10 CEOs
-  - 📄 Active test applications
-
-You can run this file anytime to restore the system to its default state.
+> Leave the database empty. No SQL import is required.
 
 ---
 
-## 4. Access the System
+## 7. Initialize the Database Using `reset_db.php`
 
 Open:
 
+```text
+http://localhost/Internship-Tracker-System/reset_db.php
 ```
+
+The script will automatically:
+
+* Create all required tables.
+* Hash passwords securely.
+* Insert:
+
+  * 👨‍🎓 5 Students
+  * 🏢 10 S&P 500 Companies
+  * 👔 10 CEOs
+  * 📄 Active internship applications
+
+You can run this file anytime to reset the system to its default state.
+
+---
+
+## 8. Access the System
+
+Open:
+
+```text
 http://localhost/Internship-Tracker-System/
 ```
 
 ---
 
 # 🔐 Testing Credentials
-
-If you used `reset_db.php`, use the following credentials.
 
 ### Universal Password
 
@@ -149,75 +192,39 @@ All accounts use:
 yx123
 ```
 
-## User Accounts
+| Role          | Login Email           | Notes                                                          |
+| ------------- | --------------------- | -------------------------------------------------------------- |
+| System Admin  | `admin@intern.com`    | Login through `admin_login.php`                                |
+| Student       | `yuxiang@gmail.com`   | Check `student_my_applications.php` to view application status |
+| HR Supervisor | `satya@microsoft.com` | Assigned to Microsoft. Try accepting or rejecting candidates   |
 
-| Role | Login Email | Notes |
-|--------|-------------|--------|
-| **System Admin** | `admin@intern.com` | Log in via `admin_login.php` |
-| **Student** | `yuxiang@gmail.com` | Check `student_my_applications.php` to view pending statuses |
-| **HR Supervisor** | `satya@microsoft.com` | Assigned to Microsoft. Try accepting/rejecting candidates |
+> You can view all generated accounts from:
 
-> **Note:** You can view all 25+ generated student and supervisor accounts in phpMyAdmin by checking the `User` table.
-
-```
+```text
 http://localhost/phpmyadmin/
 ```
+
+and inspect the `User` table.
 
 ---
 
 # 🛠️ Technical Highlights
 
-## 🔒 Security First
+### 🔒 Security First
 
-- Uses `password_hash()` and `password_verify()` for secure bcrypt password storage.
-- Protects against SQL Injection through **Prepared Statements** using `bind_param()`.
+* Uses `password_hash()` and `password_verify()` for secure bcrypt password storage.
+* Prevents SQL injection using prepared statements with `bind_param()`.
 
----
+### 👤 Session Management
 
-## 👤 Session Management
+* Prevents ghost sessions.
+* Restricts unauthorized URL access.
+* Provides robust login session handling.
 
-- Robust session handling.
-- Prevents **ghost sessions**.
-- Restricts unauthorized URL access.
+### 🗄️ Database Architecture
 
----
-
-## 🗄️ Database Architecture
-
-- Relational database structure.
-- Strict foreign key constraints.
-- Proper relationships between:
-
-  - Users
-  - Companies
-  - Applications
-
----
-
-## 🎨 Custom UI Logic
-
-- Dynamic status badges for application states.
-- Professional ID generation using PHP `sprintf()`.
-
-Example:
-
-```php
-sprintf("APP_%05d", 45);
-// Output: APP_00045
-```
-
----
-
-# 📌 Features Seeded by `reset_db.php`
-
-- ✅ 5 Student Accounts
-- ✅ 10 S&P 500 Companies
-- ✅ 10 CEO Records
-- ✅ Active Internship Applications
-- ✅ Pre-generated Testing Data
-- ✅ Secure Password Hashing
-- ✅ Default Password: `yx123`
-
----
+* Relational database design.
+* Strict foreign key constraints.
+* Relationships among Users, Companies, and Applications.
 
 Enjoy testing and developing the **Internship Tracker System**! 🚀
