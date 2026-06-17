@@ -1,8 +1,11 @@
 <?php
 // admin_login.php
 session_start();
-//require_once 'db_connect.php';
 
+// 1. UNCOMMENTED: We are now connecting to the real database!
+require_once 'db_connect.php';
+
+// Redirect if already logged in as Admin
 if (isset($_SESSION['UserID']) && $_SESSION['Role'] == 'Admin') {
     header("Location: admin_dashboard.php");
     exit();
@@ -11,25 +14,37 @@ if (isset($_SESSION['UserID']) && $_SESSION['Role'] == 'Admin') {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
+    // 2. Changed from 'username' to 'email' to match your database
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    // --- THE HARDCODED CHECK ---
-    if ($username === 'admin' && $password === 'Password') {
-        
-        // Give the hardcoded admin a fake UserID so other pages don't throw errors
-        $_SESSION['UserID'] = 9999; 
-        $_SESSION['Name'] = 'System Administrator';
-        $_SESSION['Role'] = 'Admin';
-        
-        header("Location: admin_dashboard.php");
-        exit();
-        
-    } else {
-        $error = "Invalid credentials. Access denied.";
-    }
-}
+    // 3. Query the database SPECIFICALLY for an Admin with this email
+    $stmt = $conn->prepare("SELECT UserID, Name, Password FROM User WHERE Email = ? AND Roles = 'Admin'");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
+    if ($row = $result->fetch_assoc()) {
+        
+        // 4. Securely verify the password (handles both encrypted 'yx123' and plain text)
+        if ($password === $row['Password'] || password_verify($password, $row['Password'])) {
+            
+            // Set the REAL session variables from the database
+            $_SESSION['UserID'] = $row['UserID']; 
+            $_SESSION['Name'] = $row['Name'];
+            $_SESSION['Role'] = 'Admin';
+            
+            header("Location: admin_dashboard.php");
+            exit();
+            
+        } else {
+            $error = "Invalid password. Access denied.";
+        }
+    } else {
+        $error = "Admin account not found or invalid email.";
+    }
+    $stmt->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if($error) echo "<div style='color: #c62828; padding: 12px; background: #ffebee; margin-bottom: 20px; border-radius: 6px; font-size: 14px;'>$error</div>"; ?>
             
             <form method="POST">
-                <input type="text" name="username" class="form-control" placeholder="Admin Username" required>
+                <input type="email" name="email" class="form-control" placeholder="Admin Email (admin@intern.com)" required>
                 <input type="password" name="password" class="form-control" placeholder="Password" required>
                 
                 <button type="submit" class="btn-primary">Authenticate</button>

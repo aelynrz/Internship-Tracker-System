@@ -11,20 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     
-    // New Student Fields
     $matric = trim($_POST['matric']);
     $cgpa = floatval($_POST['cgpa']);
     $major = trim($_POST['major']);
+    $contact_number = trim($_POST['contact_number']); // NEW: Get Contact Number
 
     if (empty($name) || empty($email) || empty($password) || empty($matric)) {
         $error = "Name, Email, Password, and Matric Number are required.";
     } else {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // Notice we hardcode the role as 'Student' here
-        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, MatricNumber, CGPA, Major) VALUES (?, ?, ?, 'Student', ?, ?, ?)");
-        // "ssssds" means: string, string, string, string, double/decimal, string
-        $stmt->bind_param("ssssds", $name, $email, $hashed_password, $matric, $cgpa, $major);
+        // NEW: Added ContactNumber to the INSERT query
+        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, MatricNumber, CGPA, Major, ContactNumber) VALUES (?, ?, ?, 'Student', ?, ?, ?, ?)");
+        $stmt->bind_param("ssssdss", $name, $email, $hashed_password, $matric, $cgpa, $major, $contact_number);
 
         if ($stmt->execute()) {
             $success = "Registration successful! You can now login.";
@@ -86,9 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Major / Course</label>
-                    <input type="text" name="major" class="form-control" placeholder="e.g. Computer Science">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Major / Course</label>
+                        <input type="text" name="major" class="form-control" placeholder="e.g. Computer Science">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact No.</label>
+                        <input type="text" name="contact_number" class="form-control" placeholder="+6012345678">
+                    </div>
                 </div>
 
                 <div class="form-group">
