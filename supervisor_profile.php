@@ -16,22 +16,20 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $department = trim($_POST['department']);
     $new_password = $_POST['password'];
 
+    // Removed "Department" from these update queries
     if (!empty($new_password)) {
-        // Update everything including password
         $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-        $update_stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, Department=?, Password=? WHERE UserID=?");
-        $update_stmt->bind_param("ssssi", $name, $email, $department, $hashed_password, $supervisor_id);
+        $update_stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, Password=? WHERE UserID=?");
+        $update_stmt->bind_param("sssi", $name, $email, $hashed_password, $supervisor_id);
     } else {
-        // Update only text fields
-        $update_stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, Department=? WHERE UserID=?");
-        $update_stmt->bind_param("sssi", $name, $email, $department, $supervisor_id);
+        $update_stmt = $conn->prepare("UPDATE User SET Name=?, Email=? WHERE UserID=?");
+        $update_stmt->bind_param("ssi", $name, $email, $supervisor_id);
     }
 
     if ($update_stmt->execute()) {
-        $_SESSION['Name'] = $name; // Update session name so the header changes immediately
+        $_SESSION['Name'] = $name; 
         $message = "<div style='color: #2e7d32; background: #e8f5e9; padding: 12px; border-radius: 8px; margin-bottom: 20px;'>Profile updated successfully!</div>";
     } else {
         $message = "<div style='color: #c62828; background: #ffebee; padding: 12px; border-radius: 8px; margin-bottom: 20px;'>Error updating profile. Email might be taken.</div>";
@@ -39,11 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update_stmt->close();
 }
 
-// Fetch current user info AND their assigned company
+// Fetch current user info AND their assigned company based on the new User.CompanyID column
 $query = "
-    SELECT u.Name, u.Email, u.Department, c.CompanyName 
+    SELECT u.Name, u.Email, c.CompanyName 
     FROM User u 
-    LEFT JOIN Company c ON u.UserID = c.SupervisorID 
+    LEFT JOIN Company c ON u.CompanyID = c.CompanyID 
     WHERE u.UserID = ?
 ";
 $stmt = $conn->prepare($query);
@@ -92,7 +90,7 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
             
             <h2 class="section-title">Company Affiliation</h2>
             <div class="read-only-box">
-                <span style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 5px;">Currently Managing:</span>
+                <span style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 5px;">You represent:</span>
                 <strong style="font-size: 18px;"><?php echo htmlspecialchars($assigned_company); ?></strong>
                 <div style="font-size: 12px; color: #7a7a7a; margin-top: 10px;">* If this is incorrect, please contact the System Administrator to reassign your account.</div>
             </div>
@@ -107,11 +105,6 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
                 <div class="form-group">
                     <label>Email Address</label>
                     <input type="email" name="email" class="form-control" required value="<?php echo htmlspecialchars($user_data['Email']); ?>">
-                </div>
-
-                <div class="form-group">
-                    <label>Department / Title</label>
-                    <input type="text" name="department" class="form-control" placeholder="e.g., HR Manager" value="<?php echo htmlspecialchars($user_data['Department'] ?? ''); ?>">
                 </div>
                 
                 <div class="form-group">

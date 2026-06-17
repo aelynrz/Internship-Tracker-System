@@ -3,7 +3,7 @@
 session_start();
 require_once 'db_connect.php';
 
-// Security Check: Must be logged in AND be an Admin
+// Security Check
 if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
     header("Location: login.php");
     exit();
@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ACTION: Delete User
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
         $delete_id = intval($_POST['user_id']);
-        
         if ($delete_id === $_SESSION['UserID']) {
             $message = "<div style='color: #c62828; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>You cannot delete your own admin account.</div>";
         } else {
@@ -25,8 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("i", $delete_id);
             if ($stmt->execute()) {
                 $message = "<div style='color: #2e7d32; background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>User deleted successfully.</div>";
-            } else {
-                $message = "<div style='color: #c62828; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Error deleting user.</div>";
             }
             $stmt->close();
         }
@@ -43,29 +40,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, MatricNumber, CGPA, Major) VALUES (?, ?, ?, 'Student', ?, ?, ?)");
         $stmt->bind_param("ssssds", $name, $email, $password, $matric, $cgpa, $major);
-        
         if ($stmt->execute()) {
             $message = "<div style='color: #2e7d32; background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Student added successfully.</div>";
-        } else {
-            $message = "<div style='color: #c62828; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Error adding student. Email or Matric Number might already exist.</div>";
         }
         $stmt->close();
     }
 
-    // ACTION: Add Supervisor
+    // ACTION: Add Supervisor (NOW LINKS DIRECTLY TO COMPANYID)
     if (isset($_POST['action']) && $_POST['action'] === 'add_supervisor') {
         $name = trim($_POST['name']);
         $email = trim($_POST['email']);
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        $dept = trim($_POST['department']);
+        $company_id = !empty($_POST['company_id']) ? intval($_POST['company_id']) : NULL;
 
-        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, Department) VALUES (?, ?, ?, 'Supervisor', ?)");
-        $stmt->bind_param("ssss", $name, $email, $password, $dept);
-        
+        $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, CompanyID) VALUES (?, ?, ?, 'Supervisor', ?)");
+        $stmt->bind_param("sssi", $name, $email, $password, $company_id);
         if ($stmt->execute()) {
             $message = "<div style='color: #2e7d32; background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Supervisor added successfully.</div>";
-        } else {
-            $message = "<div style='color: #c62828; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Error adding supervisor. Email might already exist.</div>";
         }
         $stmt->close();
     }
@@ -75,35 +66,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $edit_id = intval($_POST['user_id']);
         $name = trim($_POST['name']);
         $email = trim($_POST['email']);
-        $role = $_POST['role']; // Readonly in form, passed as hidden or readonly
+        $role = $_POST['role']; 
         $new_password = $_POST['password'];
 
-        // Determine extra fields based on role
         $matric = ($role === 'Student') ? trim($_POST['matric']) : NULL;
         $cgpa = ($role === 'Student') ? floatval($_POST['cgpa']) : NULL;
         $major = ($role === 'Student') ? trim($_POST['major']) : NULL;
-        $dept = ($role === 'Supervisor') ? trim($_POST['department']) : NULL;
+        $company_id = ($role === 'Supervisor' && !empty($_POST['company_id'])) ? intval($_POST['company_id']) : NULL;
 
         if (!empty($new_password)) {
             $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, Password=?, MatricNumber=?, CGPA=?, Major=?, Department=? WHERE UserID=?");
-            $stmt->bind_param("ssssdssi", $name, $email, $hashed_password, $matric, $cgpa, $major, $dept, $edit_id);
+            $stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, Password=?, MatricNumber=?, CGPA=?, Major=?, CompanyID=? WHERE UserID=?");
+            $stmt->bind_param("ssssdsii", $name, $email, $hashed_password, $matric, $cgpa, $major, $company_id, $edit_id);
         } else {
-            $stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, MatricNumber=?, CGPA=?, Major=?, Department=? WHERE UserID=?");
-            $stmt->bind_param("sssdssi", $name, $email, $matric, $cgpa, $major, $dept, $edit_id);
+            $stmt = $conn->prepare("UPDATE User SET Name=?, Email=?, MatricNumber=?, CGPA=?, Major=?, CompanyID=? WHERE UserID=?");
+            $stmt->bind_param("sssdssii", $name, $email, $matric, $cgpa, $major, $company_id, $edit_id);
         }
-
         if ($stmt->execute()) {
             $message = "<div style='color: #2e7d32; background: #e8f5e9; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>User updated successfully.</div>";
-        } else {
-            $message = "<div style='color: #c62828; background: #ffebee; padding: 10px; border-radius: 8px; margin-bottom: 20px;'>Error updating user.</div>";
         }
         $stmt->close();
     }
 }
 
-// Fetch all users from database including new fields
-$query = "SELECT UserID, Name, Email, Roles, MatricNumber, CGPA, Major, Department FROM User ORDER BY UserID DESC";
+// Fetch all Companies for the Dropdown menus
+$companies = [];
+$comp_query = $conn->query("SELECT CompanyID, CompanyName FROM Company ORDER BY CompanyName ASC");
+while ($c = $comp_query->fetch_assoc()) {
+    $companies[] = $c;
+}
+
+// Fetch Users + their assigned CompanyName
+$query = "
+    SELECT u.UserID, u.Name, u.Email, u.Roles, u.MatricNumber, u.CGPA, u.Major, u.CompanyID, c.CompanyName 
+    FROM User u 
+    LEFT JOIN Company c ON u.CompanyID = c.CompanyID
+    ORDER BY u.UserID DESC
+";
 $result = $conn->query($query);
 ?>
 
@@ -111,7 +110,6 @@ $result = $conn->query($query);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Admin</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
@@ -144,7 +142,6 @@ $result = $conn->query($query);
     <main class="main-content">
         <header class="top-header">
             <h1 class="page-title">Manage Users</h1>
-            
             <div style="display: flex; gap: 10px;">
                 <button onclick="document.getElementById('addStudentModal').style.display='flex'" style="padding: 10px 20px; background: var(--accent-dark); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">+ Add Student</button>
                 <button onclick="document.getElementById('addSupervisorModal').style.display='flex'" style="padding: 10px 20px; background: #4a4a4a; color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">+ Add Supervisor</button>
@@ -170,14 +167,15 @@ $result = $conn->query($query);
                         while($row = $result->fetch_assoc()) { 
                             $badgeClass = ($row['Roles'] == 'Admin') ? 'accepted' : 'pending';
                             
-                            // Format the Details column based on the role
                             $detailsHtml = "";
                             if ($row['Roles'] === 'Student') {
                                 $detailsHtml = "<strong>Matrik:</strong> " . htmlspecialchars($row['MatricNumber'] ?? 'N/A') . "<br>";
                                 $detailsHtml .= "<strong>CGPA:</strong> " . htmlspecialchars($row['CGPA'] ?? 'N/A') . "<br>";
                                 $detailsHtml .= "<strong>Major:</strong> " . htmlspecialchars($row['Major'] ?? 'N/A');
                             } elseif ($row['Roles'] === 'Supervisor') {
-                                $detailsHtml = "<strong>Department:</strong> " . htmlspecialchars($row['Department'] ?? 'N/A');
+                                // Now displays the Company Name instead of Department
+                                $comp_name = $row['CompanyName'] ? htmlspecialchars($row['CompanyName']) : '<span style="color:red;">No Company Assigned</span>';
+                                $detailsHtml = "<strong>Company:</strong> " . $comp_name;
                             } else {
                                 $detailsHtml = "<em>System Administrator</em>";
                             }
@@ -201,7 +199,7 @@ $result = $conn->query($query);
                                         '<?php echo addslashes($row['MatricNumber'] ?? ''); ?>',
                                         '<?php echo $row['CGPA'] ?? ''; ?>',
                                         '<?php echo addslashes($row['Major'] ?? ''); ?>',
-                                        '<?php echo addslashes($row['Department'] ?? ''); ?>'
+                                        '<?php echo $row['CompanyID'] ?? ''; ?>'
                                     )" 
                                     style="background: #e0e0e0; color: #333; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">
                                 Edit
@@ -225,6 +223,7 @@ $result = $conn->query($query);
         </section>
     </main>
 
+    <!-- Modal 1: Add Student -->
     <div class="modal-overlay" id="addStudentModal">
         <div class="modal-card">
             <h2 style="margin-bottom: 20px;">Add New Student</h2>
@@ -238,7 +237,6 @@ $result = $conn->query($query);
                 </div>
                 <div class="form-group"><label>Major</label><input type="text" name="major" class="form-control"></div>
                 <div class="form-group"><label>Temporary Password</label><input type="password" name="password" class="form-control" required></div>
-                
                 <div style="display: flex; gap: 10px; margin-top: 25px;">
                     <button type="button" onclick="document.getElementById('addStudentModal').style.display='none'" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); background: white; border-radius: var(--radius-md); cursor: pointer;">Cancel</button>
                     <button type="submit" style="flex: 1; padding: 10px; border: none; background: var(--accent-dark); color: white; border-radius: var(--radius-md); cursor: pointer;">Save Student</button>
@@ -247,6 +245,7 @@ $result = $conn->query($query);
         </div>
     </div>
 
+    <!-- Modal 2: Add Supervisor -->
     <div class="modal-overlay" id="addSupervisorModal">
         <div class="modal-card">
             <h2 style="margin-bottom: 20px;">Add New Supervisor</h2>
@@ -254,9 +253,19 @@ $result = $conn->query($query);
                 <input type="hidden" name="action" value="add_supervisor">
                 <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" required></div>
                 <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" required></div>
-                <div class="form-group"><label>Department</label><input type="text" name="department" class="form-control" placeholder="e.g., HR, Engineering"></div>
-                <div class="form-group"><label>Temporary Password</label><input type="password" name="password" class="form-control" required></div>
                 
+                <!-- NEW: Company Dropdown Instead of Department -->
+                <div class="form-group">
+                    <label>Assign to Company</label>
+                    <select name="company_id" class="form-control" required>
+                        <option value="">-- Select Company --</option>
+                        <?php foreach($companies as $comp): ?>
+                            <option value="<?php echo $comp['CompanyID']; ?>"><?php echo htmlspecialchars($comp['CompanyName']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group"><label>Temporary Password</label><input type="password" name="password" class="form-control" required></div>
                 <div style="display: flex; gap: 10px; margin-top: 25px;">
                     <button type="button" onclick="document.getElementById('addSupervisorModal').style.display='none'" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); background: white; border-radius: var(--radius-md); cursor: pointer;">Cancel</button>
                     <button type="submit" style="flex: 1; padding: 10px; border: none; background: #4a4a4a; color: white; border-radius: var(--radius-md); cursor: pointer;">Save Supervisor</button>
@@ -265,6 +274,7 @@ $result = $conn->query($query);
         </div>
     </div>
 
+    <!-- Modal 3: Dynamic Edit User -->
     <div class="modal-overlay" id="editUserModal">
         <div class="modal-card">
             <h2 style="margin-bottom: 20px;">Edit User Details</h2>
@@ -284,8 +294,17 @@ $result = $conn->query($query);
                     <div class="form-group"><label>Major</label><input type="text" name="major" id="edit_major" class="form-control"></div>
                 </div>
 
+                <!-- NEW: Dynamic Supervisor Company Dropdown -->
                 <div id="dynamic_supervisor_fields" style="display: none;">
-                    <div class="form-group"><label>Department</label><input type="text" name="department" id="edit_department" class="form-control"></div>
+                    <div class="form-group">
+                        <label>Assigned Company</label>
+                        <select name="company_id" id="edit_company_id" class="form-control">
+                            <option value="">-- Select Company --</option>
+                            <?php foreach($companies as $comp): ?>
+                                <option value="<?php echo $comp['CompanyID']; ?>"><?php echo htmlspecialchars($comp['CompanyName']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-group"><label>New Password <span style="font-weight: normal; color: #7a7a7a; font-size: 12px;">(Leave blank to keep)</span></label><input type="password" name="password" class="form-control"></div>
@@ -299,18 +318,15 @@ $result = $conn->query($query);
     </div>
 
     <script>
-        // Intelligent Edit Modal: Shows only the fields relevant to the user's role
-        function openEditModal(id, name, email, role, matric, cgpa, major, dept) {
+        function openEditModal(id, name, email, role, matric, cgpa, major, company_id) {
             document.getElementById('edit_user_id').value = id;
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_email').value = email;
             document.getElementById('edit_role').value = role;
             
-            // Hide both blocks first
             document.getElementById('dynamic_student_fields').style.display = 'none';
             document.getElementById('dynamic_supervisor_fields').style.display = 'none';
 
-            // Show relevant fields and populate data based on Role
             if (role === 'Student') {
                 document.getElementById('dynamic_student_fields').style.display = 'block';
                 document.getElementById('edit_matric').value = matric;
@@ -318,13 +334,12 @@ $result = $conn->query($query);
                 document.getElementById('edit_major').value = major;
             } else if (role === 'Supervisor') {
                 document.getElementById('dynamic_supervisor_fields').style.display = 'block';
-                document.getElementById('edit_department').value = dept;
+                document.getElementById('edit_company_id').value = company_id;
             }
 
             document.getElementById('editUserModal').style.display = 'flex';
         }
 
-        // Close modals when clicking outside the white card
         window.onclick = function(event) {
             if (event.target == document.getElementById('addStudentModal')) document.getElementById('addStudentModal').style.display = 'none';
             if (event.target == document.getElementById('addSupervisorModal')) document.getElementById('addSupervisorModal').style.display = 'none';
