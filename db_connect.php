@@ -25,5 +25,5 @@ if ($db_check->num_rows == 0) {
 
 // try to connect to the database again
 $conn->select_db($dbname);
-echo "Connection to database : SUCCESSFUL"; 
+//echo "Connection to database : SUCCESSFUL"; 
 ?>

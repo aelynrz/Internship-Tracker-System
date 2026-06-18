@@ -1,0 +1,101 @@
+body {
+    background-image: url('../images/img1.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: #f4f6f9; 
+}
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:30px;
+    margin-top:20px;
+}
+
+.dashboard-card{
+    background: rgba(255, 255, 255, 0.5);
+    border-radius:20px;
+    padding:50px 30px;
+    text-align:center;
+    text-decoration:none;
+    color:#1e1e1e;
+    transition:all .3s ease;
+    border:1px solid #e0e0e0;
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+}
+
+.dashboard-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+}
+
+h3{
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size:50px;
+    margin-top: 5px; margin-bottom: 0px;
+    text-align: center;
+    font-weight: normal;
+    color: #222;
+}
+
+.card-icon{
+    font-size:60px;
+    margin-bottom:20px;
+    transition:all .3s ease;
+}
+
+.dashboard-card:hover .card-icon{
+    transform:scale(1.2);
+}
+
+.dashboard-card h3{
+    margin:0;
+    font-size:24px;
+}
+
+.dashboard-card p{
+    color:#666;
+    margin-top:10px;
+    font-size:16px;
+}
+
+.welcome-hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 40px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.welcome-card {
+    width: 80%;
+    max-width: 600px;
+    padding: 40px;
+    background: transparent;
+    text-align: center;
+    animation: fadeInUpBounce 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    opacity: 0;
+}
+
+.welcome-text {
+    color: #fff;
+    font-family: 'freight-big-pro';
+    font-size: 50px;
+    font-weight: normal;
+    letter-spacing: +6.5px;
+    overflow-wrap: break-world;
+}
+
+@keyframes fadeInUpBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.1);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

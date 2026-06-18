@@ -2,21 +2,22 @@
 // reset_db.php
 require_once 'db_connect.php';
 
-// 1. Disable constraints to allow dropping tables safely
+// Disable constraints to allow dropping tables safely
 $conn->query("SET FOREIGN_KEY_CHECKS = 0");
 
-// 2. Drop existing tables if they exist to start completely fresh
+// Drop existing tables if they exist to start completely fresh
 $conn->query("DROP TABLE IF EXISTS Application");
 $conn->query("DROP TABLE IF EXISTS User");
 $conn->query("DROP TABLE IF EXISTS Company");
 
-// 3. CREATE TABLES FROM SCRATCH
+// CREATE COMPANY TABLE
 $conn->query("CREATE TABLE Company (
     CompanyID INT AUTO_INCREMENT PRIMARY KEY,
     CompanyName VARCHAR(255) NOT NULL,
     Industry VARCHAR(100)
 )");
 
+// CREATE USER TABLE
 $conn->query("CREATE TABLE User (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
@@ -31,6 +32,7 @@ $conn->query("CREATE TABLE User (
     FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID) ON DELETE SET NULL
 )");
 
+// CREATE APPLICATION TABLE
 $conn->query("CREATE TABLE Application (
     ApplicationID INT AUTO_INCREMENT PRIMARY KEY,
     StudentID INT NOT NULL,
@@ -44,7 +46,7 @@ $conn->query("CREATE TABLE Application (
 // Re-enable constraints
 $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
-// 4. Insert Top 10 S&P 500 Companies
+// 4. Insert company datas
 $conn->query("INSERT INTO Company (CompanyID, CompanyName, Industry) VALUES
 (1, 'Microsoft Corporation', 'Technology'),
 (2, 'Apple Inc.', 'Consumer Electronics'),
@@ -57,13 +59,13 @@ $conn->query("INSERT INTO Company (CompanyID, CompanyName, Industry) VALUES
 (9, 'Eli Lilly and Company', 'Pharmaceuticals'),
 (10, 'Broadcom Inc.', 'Semiconductors')");
 
-// 5. Generate the secure hash for your custom password
+// Generate secure hash for password
 $password = password_hash('yx123', PASSWORD_DEFAULT);
 
-// 6. Insert Admin, 10 CEO Supervisors, and 5 Students
+// Insert Admin, 10 CEO Supervisors, and 5 Students
 $conn->query("INSERT INTO User (UserID, Name, Email, Password, Roles, MatricNumber, CGPA, Major, ContactNumber, CompanyID) VALUES
 -- Admin
-(1, 'System Admin', 'admin@intern.com', '$password', 'Admin', NULL, NULL, NULL, NULL, NULL),
+(1, 'System Admin', 'admin@utm.com', '$password', 'Admin', NULL, NULL, NULL, NULL, NULL),
 
 -- Supervisors (CEOs assigned to Companies 1-10)
 (2, 'Satya Nadella', 'satya@microsoft.com', '$password', 'Supervisor', NULL, NULL, NULL, '+1800111222', 1),
@@ -81,12 +83,12 @@ $conn->query("INSERT INTO User (UserID, Name, Email, Password, Roles, MatricNumb
 (12, 'Looi Yu Xiang', 'yuxiang@gmail.com', '$password', 'Student', 'A24CS0107', 3.85, 'Network and Security', '+60111222333', NULL),
 (13, 'Tan Jia Yie', 'jiayie@gmail.com', '$password', 'Student', 'A24CS0108', 3.70, 'Software Engineering', '+60111222444', NULL),
 (14, 'Ng She Ling', 'sheling@gmail.com', '$password', 'Student', 'A24CS0109', 3.90, 'Data Engineering', '+60111222555', NULL),
-(15, 'Mohammad Adrian Syahirin', 'adrian@gmail.com', '$password', 'Student', 'A24CS0110', 3.65, 'Software Engineering', '+60111222666', NULL),
+(15, 'Mohammad Adrian Syahirin', 'adrian@gmail.com', '$password', 'Student', 'A24CS0110', 3.65, 'Bioinformatics', '+60111222666', NULL),
 (16, 'Ezralyn', 'ezralyn@gmail.com', '$password', 'Student', 'A24CS0111', 3.80, 'Graphics and Multimedia', '+60111222777', NULL)");
 
 // 7. Insert Automated Applications (All Status = Pending)
 $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionDate) VALUES
--- Yu Xiang applies to 4 tech/network heavy companies
+-- Yu Xiang applies to 4 companies
 (12, 1, 'Pending', '2026-06-15 09:00:00'),
 (12, 3, 'Pending', '2026-06-15 10:15:00'),
 (12, 10, 'Pending', '2026-06-16 11:30:00'),
@@ -114,4 +116,4 @@ $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionD
 (16, 4, 'Pending', '2026-06-18 11:00:00')");
 
 // 8. Success Message UI
-echo "<br>Data importation into databse : SUCCESSFUL<br>";
+echo "Data importation into databse : SUCCESSFUL<br>";
