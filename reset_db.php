@@ -114,12 +114,4 @@ $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionD
 (16, 4, 'Pending', '2026-06-18 11:00:00')");
 
 // 8. Success Message UI
-echo "<div style='font-family: Inter, sans-serif; max-width: 650px; margin: 50px auto; padding: 40px; border-radius: 16px; background: white; border: 1px solid #e5e7eb; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;'>";
-echo "<h1 style='color: #1e1e1e; margin-top: 0; margin-bottom: 10px;'>Data Successfully Injected! 🚀</h1>";
-echo "<p style='font-size: 16px; color: #7a7a7a; margin-bottom: 30px;'>Tables Built. 5 Students, 10 Companies, 10 CEOs, and 17 Applications have been created.</p>";
-echo "<div style='background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;'>";
-echo "<p style='font-size: 18px; margin: 0;'>The universal password for all accounts is: <strong style='color: #2e7d32; font-size: 22px; display: block; margin-top: 10px;'>yx123</strong></p>";
-echo "</div>";
-echo "<a href='login.php' style='display: inline-block; margin-top: 30px; padding: 12px 24px; background: #1e1e1e; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; width: 100%; box-sizing: border-box;'>Return to Login</a>";
-echo "</div>";
-?>
+echo "<br>Data importation into databse : SUCCESSFUL<br>";
