@@ -5,7 +5,7 @@ require_once 'db_connect.php';
 
 // Security Check: Must be logged in AND be an Admin
 if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Admin') {
-    header("Location: login.php");
+    header("Location: admin_login.php");
     exit();
 }
 
