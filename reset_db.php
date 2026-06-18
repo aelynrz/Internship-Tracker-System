@@ -1,22 +1,50 @@
 <?php
-// master_seed.php
+// reset_db.php
 require_once 'db_connect.php';
 
-// 1. Disable constraints and clear tables safely
+// 1. Disable constraints to allow dropping tables safely
 $conn->query("SET FOREIGN_KEY_CHECKS = 0");
 
-$conn->query("DELETE FROM Application");
-$conn->query("ALTER TABLE Application AUTO_INCREMENT = 1");
+// 2. Drop existing tables if they exist to start completely fresh
+$conn->query("DROP TABLE IF EXISTS Application");
+$conn->query("DROP TABLE IF EXISTS User");
+$conn->query("DROP TABLE IF EXISTS Company");
 
-$conn->query("DELETE FROM User");
-$conn->query("ALTER TABLE User AUTO_INCREMENT = 1");
+// 3. CREATE TABLES FROM SCRATCH
+$conn->query("CREATE TABLE Company (
+    CompanyID INT AUTO_INCREMENT PRIMARY KEY,
+    CompanyName VARCHAR(255) NOT NULL,
+    Industry VARCHAR(100)
+)");
 
-$conn->query("DELETE FROM Company");
-$conn->query("ALTER TABLE Company AUTO_INCREMENT = 1");
+$conn->query("CREATE TABLE User (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Roles ENUM('Admin', 'Supervisor', 'Student') NOT NULL,
+    MatricNumber VARCHAR(50) NULL,
+    CGPA DECIMAL(3,2) NULL,
+    Major VARCHAR(100) NULL,
+    ContactNumber VARCHAR(20) NULL,
+    CompanyID INT NULL,
+    FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID) ON DELETE SET NULL
+)");
 
+$conn->query("CREATE TABLE Application (
+    ApplicationID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    CompanyID INT NOT NULL,
+    Status ENUM('Pending', 'Accepted', 'Rejected') DEFAULT 'Pending',
+    SubmissionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (StudentID) REFERENCES User(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID) ON DELETE CASCADE
+)");
+
+// Re-enable constraints
 $conn->query("SET FOREIGN_KEY_CHECKS = 1");
 
-// 2. Insert Top 10 S&P 500 Companies
+// 4. Insert Top 10 S&P 500 Companies
 $conn->query("INSERT INTO Company (CompanyID, CompanyName, Industry) VALUES
 (1, 'Microsoft Corporation', 'Technology'),
 (2, 'Apple Inc.', 'Consumer Electronics'),
@@ -29,10 +57,10 @@ $conn->query("INSERT INTO Company (CompanyID, CompanyName, Industry) VALUES
 (9, 'Eli Lilly and Company', 'Pharmaceuticals'),
 (10, 'Broadcom Inc.', 'Semiconductors')");
 
-// 3. Generate the secure hash for your custom password
+// 5. Generate the secure hash for your custom password
 $password = password_hash('yx123', PASSWORD_DEFAULT);
 
-// 4. Insert Admin, 10 CEO Supervisors, and 5 Students
+// 6. Insert Admin, 10 CEO Supervisors, and 5 Students
 $conn->query("INSERT INTO User (UserID, Name, Email, Password, Roles, MatricNumber, CGPA, Major, ContactNumber, CompanyID) VALUES
 -- Admin
 (1, 'System Admin', 'admin@intern.com', '$password', 'Admin', NULL, NULL, NULL, NULL, NULL),
@@ -56,7 +84,7 @@ $conn->query("INSERT INTO User (UserID, Name, Email, Password, Roles, MatricNumb
 (15, 'Mohammad Adrian Syahirin', 'adrian@gmail.com', '$password', 'Student', 'A24CS0110', 3.65, 'Software Engineering', '+60111222666', NULL),
 (16, 'Ezralyn', 'ezralyn@gmail.com', '$password', 'Student', 'A24CS0111', 3.80, 'Graphics and Multimedia', '+60111222777', NULL)");
 
-// 5. Insert Automated Applications (All Status = Pending)
+// 7. Insert Automated Applications (All Status = Pending)
 $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionDate) VALUES
 -- Yu Xiang applies to 4 tech/network heavy companies
 (12, 1, 'Pending', '2026-06-15 09:00:00'),
@@ -85,10 +113,10 @@ $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionD
 (16, 8, 'Pending', '2026-06-16 15:30:00'),
 (16, 4, 'Pending', '2026-06-18 11:00:00')");
 
-// 6. Success Message UI
+// 8. Success Message UI
 echo "<div style='font-family: Inter, sans-serif; max-width: 650px; margin: 50px auto; padding: 40px; border-radius: 16px; background: white; border: 1px solid #e5e7eb; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center;'>";
 echo "<h1 style='color: #1e1e1e; margin-top: 0; margin-bottom: 10px;'>Data Successfully Injected! 🚀</h1>";
-echo "<p style='font-size: 16px; color: #7a7a7a; margin-bottom: 30px;'>5 Students, 10 Companies, 10 CEOs, and 17 Applications have been created.</p>";
+echo "<p style='font-size: 16px; color: #7a7a7a; margin-bottom: 30px;'>Tables Built. 5 Students, 10 Companies, 10 CEOs, and 17 Applications have been created.</p>";
 echo "<div style='background: #f8f9fa; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb;'>";
 echo "<p style='font-size: 18px; margin: 0;'>The universal password for all accounts is: <strong style='color: #2e7d32; font-size: 22px; display: block; margin-top: 10px;'>yx123</strong></p>";
 echo "</div>";
