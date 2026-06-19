@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Student Registration - Internship Tracker</title>
+    <link rel="stylesheet" href="assets/css/auth.css">
     <style>
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { margin: 0; padding: 0; }
@@ -62,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="auth-container">
         <div class="auth-card">
-            <h2 style="margin-bottom: 5px; text-align: center;">Student Portal</h2>
-            <p style="text-align: center; color: #7a7a7a; margin-bottom: 25px; font-size: 14px;">Register for your internship account</p>
+            <h2 class="auth-title">Student Portal</h2>
+            <p class="auth-subtitle">Register for your internship account</p>
             
             <?php if($error) echo "<div class='alert alert-error'>$error</div>"; ?>
             <?php if($success) echo "<div class='alert alert-success'>$success</div>"; ?>
@@ -107,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <button type="submit" class="btn-primary">Register</button>
             </form>
-            <p style="text-align: center; margin-top: 20px; font-size: 14px;">
+            <p class="auth-footer">
                 Already have an account? <a href="login.php" style="color: #1e1e1e;">Log in here</a>
             </p>
         </div>

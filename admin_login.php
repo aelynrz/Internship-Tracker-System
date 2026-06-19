@@ -52,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Admin Access - InternTrack</title>
-    <link rel="stylesheet" href="assets/css/admin_login.css">
+    <link rel="stylesheet" href="assets/css/admin_dashboard.css">
 </head>
-<body>
+<body class="auth-body">
     <div class="auth-container">
         <div class="auth-card">
             <h2 style="margin-bottom: 25px; text-align: center; color: #c62828;">Admin Secure Login</h2>

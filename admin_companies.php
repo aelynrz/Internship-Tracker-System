@@ -119,15 +119,7 @@ $result = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Companies - Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: var(--radius-lg); width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 500; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
-        .section-divider { border-bottom: 1px solid var(--border-color); margin: 25px 0 15px; padding-bottom: 5px; font-size: 16px; font-weight: 600; color: var(--text-primary); }
-    </style>
+    <link rel="stylesheet" href="assets/css/admin_dashboard.css">
 </head>
 <body>
 
@@ -139,9 +131,9 @@ $result = $conn->query($query);
             <li class="nav-item"><a href="admin_companies.php" class="nav-link active">Companies</a></li>
             <li class="nav-item"><a href="admin_applications.php" class="nav-link">Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
-            <li class="nav-item"><a href="logout_admin.php" class="nav-link">Log out</a></li>
-        </div>
+        <ul class="nav-menu" style="margin-top: auto;">
+            <li class="nav-item">
+        </ul>
     </aside>
 
     <main class="main-content">
@@ -259,26 +251,6 @@ $result = $conn->query($query);
             </form>
         </div>
     </div>
-
-    <script>
-        const addModal = document.getElementById('addCompanyModal');
-        function openModal() { addModal.style.display = 'flex'; }
-        function closeModal() { addModal.style.display = 'none'; }
-
-        const editModal = document.getElementById('editCompanyModal');
-        function openEditModal(id, name, industry, sup_id) {
-            document.getElementById('edit_company_id').value = id;
-            document.getElementById('edit_company_name').value = name;
-            document.getElementById('edit_industry').value = industry;
-            document.getElementById('edit_supervisor_id').value = sup_id;
-            editModal.style.display = 'flex';
-        }
-        function closeEditModal() { editModal.style.display = 'none'; }
-        
-        window.onclick = function(event) {
-            if (event.target == addModal) { closeModal(); }
-            if (event.target == editModal) { closeEditModal(); }
-        }
-    </script>
+    <script src="assets/js/admin.js"></script>
 </body>
 </html>

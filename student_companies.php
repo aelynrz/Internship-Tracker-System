@@ -41,16 +41,7 @@ $applied_stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Companies - InternTrack</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: var(--radius-lg); width: 100%; max-width: 500px; }
-        .data-box { background: #f9f9f9; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin: 20px 0; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .data-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .data-label { color: var(--text-secondary); font-size: 13px; font-weight: 500; }
-        .data-value { font-weight: 600; color: var(--text-primary); text-align: right; }
-    </style>
+    <link rel="stylesheet" href="assets/css/student.css">
 </head>
 <body>
 
@@ -61,9 +52,9 @@ $applied_stmt->close();
             <li class="nav-item"><a href="student_companies.php" class="nav-link active">Browse Companies</a></li>
             <li class="nav-item"><a href="student_my_applications.php" class="nav-link">My Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">
@@ -78,7 +69,6 @@ $applied_stmt->close();
                 unset($_SESSION['message']);
             }
             ?>
-            <h2 class="section-title">Partner Companies Directory</h2>
             <table>
                 <thead>
                     <tr>
@@ -103,7 +93,7 @@ $applied_stmt->close();
                                 </button>
                             <?php else: ?>
                                 <button onclick="openApplyModal(<?php echo $row['CompanyID']; ?>, '<?php echo addslashes($row['CompanyName']); ?>')" 
-                                        style="background: var(--accent-dark); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                        style="background:  #1557246b; color: black; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">
                                     Apply Now
                                 </button>
                             <?php endif; ?>

@@ -57,14 +57,7 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
 <head>
     <meta charset="UTF-8">
     <title>My Profile - Supervisor</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .profile-container { max-width: 600px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; }
-        .read-only-box { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 25px; }
-    </style>
+    <link rel="stylesheet" href="assets/css/supervisor.css">
 </head>
 <body>
 
@@ -75,9 +68,9 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
             <li class="nav-item"><a href="supervisor_applications.php" class="nav-link">Manage Applications</a></li>
             <li class="nav-item"><a href="supervisor_profile.php" class="nav-link active">My Profile</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">

@@ -30,7 +30,7 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard - Internship Tracker</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/student.css">
 </head>
 <body>
 
@@ -41,9 +41,9 @@ $result = $stmt->get_result();
             <li class="nav-item"><a href="student_companies.php" class="nav-link">Browse Companies</a></li>
             <li class="nav-item"><a href="student_my_applications.php" class="nav-link">My Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">
@@ -57,11 +57,14 @@ $result = $stmt->get_result();
         <section class="kpi-grid">
             <div class="kpi-card dark">
                 <div class="kpi-title">Total Applications</div>
-                <div class="kpi-value">3</div> </div>
+                <div class="kpi-value">3</div>
+            </div>
+
             <div class="kpi-card">
                 <div class="kpi-title">Interviews</div>
                 <div class="kpi-value">1</div>
             </div>
+
             <div class="kpi-card">
                 <div class="kpi-title">Offers</div>
                 <div class="kpi-value">0</div>

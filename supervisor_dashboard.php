@@ -75,7 +75,7 @@ if ($company_id) {
 <head>
     <meta charset="UTF-8">
     <title>Supervisor Dashboard</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/supervisor.css">
 </head>
 <body>
 
@@ -86,9 +86,9 @@ if ($company_id) {
             <li class="nav-item"><a href="supervisor_applications.php" class="nav-link">Manage Applications</a></li>
             <li class="nav-item"><a href="supervisor_profile.php" class="nav-link">My Profile</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">

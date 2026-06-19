@@ -118,18 +118,7 @@ $result = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: white; padding: 30px; border-radius: var(--radius-lg); width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
-        .form-row { display: flex; gap: 15px; }
-        .form-row .form-group { flex: 1; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: 500; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
-        .details-cell { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
-        .details-cell strong { color: var(--text-primary); }
-    </style>
+    <link rel="stylesheet" href="assets/css/admin_dashboard.css">
 </head>
 <body>
 
@@ -148,7 +137,6 @@ $result = $conn->query($query);
 
     <main class="main-content">
         <header class="top-header">
-            <h1 class="page-title">Manage Users</h1>
             <div style="display: flex; gap: 10px;">
                 <button onclick="document.getElementById('addStudentModal').style.display='flex'" style="padding: 10px 20px; background: var(--accent-dark); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">+ Add Student</button>
                 <button onclick="document.getElementById('addSupervisorModal').style.display='flex'" style="padding: 10px 20px; background: #4a4a4a; color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 500;">+ Add Supervisor</button>
@@ -332,37 +320,6 @@ $result = $conn->query($query);
             </form>
         </div>
     </div>
-
-    <script>
-        function openEditModal(id, name, email, role, matric, cgpa, major, company_id, contact_number) {
-            document.getElementById('edit_user_id').value = id;
-            document.getElementById('edit_name').value = name;
-            document.getElementById('edit_email').value = email;
-            document.getElementById('edit_role').value = role;
-            document.getElementById('edit_contact_number').value = contact_number;
-            
-            document.getElementById('dynamic_student_fields').style.display = 'none';
-            document.getElementById('dynamic_supervisor_fields').style.display = 'none';
-
-            if (role === 'Student') {
-                document.getElementById('dynamic_student_fields').style.display = 'block';
-                document.getElementById('edit_matric').value = matric;
-                document.getElementById('edit_cgpa').value = cgpa;
-                document.getElementById('edit_major').value = major;
-            } else if (role === 'Supervisor') {
-                document.getElementById('dynamic_supervisor_fields').style.display = 'block';
-                document.getElementById('edit_company_id').value = company_id;
-            }
-
-            document.getElementById('editUserModal').style.display = 'flex';
-        }
-
-        // Updated window click event to close the Add Supervisor modal too!
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('addStudentModal')) document.getElementById('addStudentModal').style.display = 'none';
-            if (event.target == document.getElementById('addSupervisorModal')) document.getElementById('addSupervisorModal').style.display = 'none';
-            if (event.target == document.getElementById('editUserModal')) document.getElementById('editUserModal').style.display = 'none';
-        }
-    </script>
+    <script src="assets/js/admin_users.js"></script>
 </body>
 </html>

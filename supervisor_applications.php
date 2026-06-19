@@ -58,7 +58,7 @@ if ($company_id) {
 <head>
     <meta charset="UTF-8">
     <title>Manage Candidates</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/supervisor.css">
 </head>
 <body>
 

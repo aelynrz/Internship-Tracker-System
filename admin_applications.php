@@ -24,7 +24,7 @@ $result = $conn->query($query);
 <head>
     <meta charset="UTF-8">
     <title>All Applications - Admin</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin_dashboard.css">
 </head>
 <body>
 
@@ -36,9 +36,9 @@ $result = $conn->query($query);
             <li class="nav-item"><a href="admin_companies.php" class="nav-link">Companies</a></li>
             <li class="nav-item"><a href="admin_applications.php" class="nav-link active">Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout_admin.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">

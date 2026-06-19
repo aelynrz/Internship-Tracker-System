@@ -31,7 +31,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Applications - InternTrack</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/student.css">
 </head>
 <body>
 
@@ -42,9 +42,9 @@ $result = $stmt->get_result();
             <li class="nav-item"><a href="student_companies.php" class="nav-link">Browse Companies</a></li>
             <li class="nav-item"><a href="student_my_applications.php" class="nav-link active">My Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">

@@ -23,12 +23,7 @@ $pending_approvals = $conn->query("SELECT COUNT(ApplicationID) FROM Application 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - InternTrack</title>
-    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin_dashboard.css">
-    <!-- Added Google Fonts for a fancy typography look -->
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="family">
 </head>
 <body>
 
@@ -40,17 +35,12 @@ $pending_approvals = $conn->query("SELECT COUNT(ApplicationID) FROM Application 
             <li class="nav-item"><a href="admin_companies.php" class="nav-link">Companies</a></li>
             <li class="nav-item"><a href="admin_applications.php" class="nav-link">Applications</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
-            <li class="nav-item"><a href="#" class="nav-link">Settings</a></li> 
-            <li class="nav-item"><a href="logout_admin.php" class="nav-link">Log out</a></li>
-        </div>
+        <ul class="nav-menu-bottom">
+            <li><a href="logout_admin.php" class="nav-link">Logout</a></li>
+        </ul>
     </aside>
 
     <main class="main-content">
-        <header class="top-header">
-            <h1 class="page-title"></h1>
-        </header>
-
         <section class="welcome-hero">
             <div class="welcome-card">
                 <h2 class="welcome-text">
@@ -61,27 +51,25 @@ $pending_approvals = $conn->query("SELECT COUNT(ApplicationID) FROM Application 
         </section>
 
         <section class="dashboard-grid">
-            <a href="admin_users.php" class="dashboard-card">
-                <h3>Manage Users</h3>
-                <p><?php echo $active_students; ?> Students</p>
-            </a>
+            <a href="admin_users.php" class="dashboard-card"><div>
+                <h3><?php echo $active_students; ?></h3>
+                <p>Total Students</p>
+            </div></a>
 
-            <a href="admin_companies.php" class="dashboard-card">
-                <h3>Companies</h3>
-                <p><?php echo $partner_companies; ?> Registered</p>
-            </a>
+            <a href="admin_companies.php" class="dashboard-card"><div>
+                <h3><?php echo $partner_companies; ?></h3>
+                <p>Partner Companies</p>
+            </div></a>
 
-            <a href="admin_applications.php" class="dashboard-card">
-                <h3>Applications</h3>
-                <p><?php echo $total_apps; ?> Submitted</p>
-            </a>
+            <a href="admin_applications.php" class="dashboard-card"><div>
+                <h3><?php echo $total_apps; ?></h3>
+                <p>Total Applications</p>
+            </div></a>
 
-            <a href="#" class="dashboard-card">
-                <h3>Reports</h3>
-                <p><?php echo $pending_approvals; ?> Pending</p>
-            </a>
-
-        </section>
+            <a href="admin_applications.php" class="dashboard-card"><div>
+                <h3><?php echo $pending_approvals; ?></h3>
+                <p>Pending Applications</p>
+            </div></a>
     </main>
 
 </body>
