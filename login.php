@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Invalid password.";
         }
     } else {
-        // ---> THIS IS THE PART YOU WERE MISSING! <---
         $error = "No account found with that email.";
     }
     $stmt->close();
@@ -58,50 +57,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Login - Internship Tracker</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        /* Reusing the auth styles from register for consistency */
-        .auth-container { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            width: 100%;
-            background-image: url('assets/images/backg1.jpg');
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-        }
-        .auth-card { background: white; padding: 40px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-md); outline: none; }
-        .btn-primary { width: 100%; padding: 12px; background: var(--accent-dark); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; }
-        .alert-error { background: #ffebee; color: #c62828; padding: 10px; margin-bottom: 20px; border-radius: 8px; font-size: 14px; }
-    </style>
+    <link rel="stylesheet" href="assets/css/student_login.css">
 </head>
-<body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <h2 style="margin-bottom: 20px; text-align: center;">Welcome Back</h2>
-            
-            <?php if($error) echo "<div class='alert-error'>$error</div>"; ?>
+<body class="login-page">
+
+<div class="login-wrapper">
+    <div class="login-card">
+
+        <div class="login-left">
+            <img src="assets/images/red.svg" alt="ICB Logo" class="login-logo">
+
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Login to continue your internship journey</p>
 
             <form method="POST" action="">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" name="email" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn-primary">Log In</button>
+                <label>Email Address</label>
+                <input type="email" name="email" required>
+
+                <label>Password</label>
+                <input type="password" name="password" required>
+
+                <button type="submit">Log In</button>
             </form>
-            <p style="text-align: center; margin-top: 20px; font-size: 14px;">
-                Don't have an account? <a href="register.php" style="color: var(--accent-dark);">Register here</a>
+
+            <p class="register-text">
+                Don't have an account?
+                <a href="register.php">Register here</a>
             </p>
         </div>
+
+        <div class="login-right">
+            <div class="image-overlay">
+                <h2>InternTrack</h2>
+                <p>Manage applications, track progress, and connect with internship opportunities.</p>
+            </div>
+        </div>
+
     </div>
+</div>
+
 </body>
 </html>
