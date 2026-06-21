@@ -10,7 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];    
-    $matric = trim($_POST['matric']);
+    // Fixed: Matches the HTML form name exactly
+    $matric = trim($_POST['matric_number']); 
     $cgpa = floatval($_POST['cgpa']);
     $major = trim($_POST['major']);
     $contact_number = trim($_POST['contact_number']); 
@@ -23,10 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("INSERT INTO User (Name, Email, Password, Roles, MatricNumber, CGPA, Major, ContactNumber) VALUES (?, ?, ?, 'Student', ?, ?, ?, ?)");
         $stmt->bind_param("ssssdss", $name, $email, $hashed_password, $matric, $cgpa, $major, $contact_number);
 
-        if ($stmt->execute()) {
+        // Fixed: Added try-catch to prevent fatal crash on duplicate email
+        try {
+            $stmt->execute();
             $success = "Registration successful! You can now login.";
-        } else {
-            $error = "Registration failed. Email or Matric Number might already exist.";
+        } catch (mysqli_sql_exception $e) {
+            if ($e->getCode() == 1062) {
+                $error = "Registration failed. This Email or Matric Number is already registered!";
+            } else {
+                $error = "An unexpected database error occurred. Please try again.";
+            }
         }
         $stmt->close();
     }
@@ -38,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Student Registration - Internship Tracker</title>
     <link rel="stylesheet" href="assets/css/student_register.css">
-
 </head>
 <body class="register-page">
 
@@ -54,10 +60,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="register-right">
             <div class="register-header">
-            <img src="assets/images/red.svg" alt="ICB Logo" class="register-logo">
-            <h1>Create Account</h1>
+                <img src="assets/images/red.svg" alt="ICB Logo" class="register-logo">
+                <h1>Create Account</h1>
             </div>
             <p class="subtitle">Register to access your internship dashboard</p>
+
+            <?php if (!empty($error)): ?>
+                <div style="color: #c62828; background: #ffebee; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid #ef9a9a;">
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($success)): ?>
+                <div style="color: #2e7d32; background: #e8f5e9; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; border: 1px solid #a5d6a7;">
+                    <?php echo htmlspecialchars($success); ?>
+                </div>
+            <?php endif; ?>
 
             <form method="POST" action="">
                 <label>Name</label>

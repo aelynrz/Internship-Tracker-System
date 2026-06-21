@@ -117,3 +117,4 @@ $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionD
 
 // 8. Success Message UI
 echo "Data importation into databse : SUCCESSFUL<br>";
+echo "Default password for all accounts: yx123<br>";
