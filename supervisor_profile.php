@@ -62,7 +62,7 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
 <body>
 
     <aside class="sidebar">
-        <div class="brand">InternTrack</div>
+        <div class="brand"><img src="assets/images/red.svg" class="logo">InternTrack</div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="supervisor_dashboard.php" class="nav-link">Company Overview</a></li>
             <li class="nav-item"><a href="supervisor_applications.php" class="nav-link">Manage Applications</a></li>
@@ -80,35 +80,52 @@ $assigned_company = $user_data['CompanyName'] ?? "No Company Assigned Yet";
 
         <section class="data-section profile-container">
             <?php echo $message; ?>
-            
-            <h2 class="section-title">Company Affiliation</h2>
-            <div class="read-only-box">
-                <span style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 5px;">You represent:</span>
-                <strong style="font-size: 18px;"><?php echo htmlspecialchars($assigned_company); ?></strong>
-                <div style="font-size: 12px; color: #7a7a7a; margin-top: 10px;">* If this is incorrect, please contact the System Administrator to reassign your account.</div>
-            </div>
+            <div class="settings-grid">
+                <div class="personal-card">
+                    <h2 class="section-title">Personal Details</h2>
 
-            <h2 class="section-title" style="margin-top: 40px;">Personal Details</h2>
-            <form method="POST" action="">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" name="name" class="form-control" required value="<?php echo htmlspecialchars($user_data['Name']); ?>">
+                    <form method="POST">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text"
+                                name="name"
+                                class="form-control"
+                                required
+                                value="<?php echo htmlspecialchars($user_data['Name']); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email"
+                                name="email"
+                                class="form-control"
+                                required
+                                value="<?php echo htmlspecialchars($user_data['Email']); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Leave blank to keep current password">
+                        </div>
+
+                        <button type="submit" class="save-btn">
+                            Save Changes
+                        </button>
+
+                    </form>
                 </div>
-                
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" name="email" class="form-control" required value="<?php echo htmlspecialchars($user_data['Email']); ?>">
+
+                <div class="company-card">
+                    <h2 class="section-title">Company Card</h2>
+                    <p>You represent</p>
+                    <h3> <?php echo htmlspecialchars($assigned_company); ?></h3>
+                    <p>Contact the administrator if this information is incorrect.</p>
                 </div>
-                
-                <div class="form-group">
-                    <label>Change Password <span style="font-weight: normal; color: #7a7a7a; font-size: 12px;">(Leave blank to keep current password)</span></label>
-                    <input type="password" name="password" class="form-control" placeholder="New Password">
-                </div>
-                
-                <button type="submit" style="background: var(--accent-dark); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 10px;">
-                    Save Changes
-                </button>
-            </form>
+
+            </div>
         </section>
     </main>
 

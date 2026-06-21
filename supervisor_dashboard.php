@@ -80,7 +80,7 @@ if ($company_id) {
 <body>
 
     <aside class="sidebar">
-        <div class="brand">InternTrack</div>
+        <div class="brand"><img src="assets/images/red.svg" class="logo">InternTrack</div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="supervisor_dashboard.php" class="nav-link active">Company Overview</a></li>
             <li class="nav-item"><a href="supervisor_applications.php" class="nav-link">Manage Applications</a></li>
@@ -94,7 +94,7 @@ if ($company_id) {
     <main class="main-content">
         <header class="top-header">
             <h1 class="page-title"><?php echo htmlspecialchars($company_name); ?> Dashboard</h1>
-            <div style="background: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; color: #7a7a7a; border: 1px solid var(--border-color);">
+            <div>
                 Supervisor: <?php echo htmlspecialchars($_SESSION['Name']); ?>
             </div>
         </header>

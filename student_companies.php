@@ -46,7 +46,7 @@ $applied_stmt->close();
 <body>
 
     <aside class="sidebar">
-        <div class="brand">InternTrack</div>
+        <div class="brand"><img src="assets/images/red.svg" class="logo">InternTrack</div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="student_dashboard.php" class="nav-link">My Dashboard</a></li>
             <li class="nav-item"><a href="student_companies.php" class="nav-link active">Browse Companies</a></li>

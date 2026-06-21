@@ -63,15 +63,15 @@ if ($company_id) {
 <body>
 
     <aside class="sidebar">
-        <div class="brand">InternTrack</div>
+        <div class="brand"><img src="assets/images/red.svg" class="logo">InternTrack</div>
         <ul class="nav-menu">
             <li class="nav-item"><a href="supervisor_dashboard.php" class="nav-link">Company Overview</a></li>
             <li class="nav-item"><a href="supervisor_applications.php" class="nav-link active">Manage Applications</a></li>
             <li class="nav-item"><a href="supervisor_profile.php" class="nav-link">My Profile</a></li>
         </ul>
-        <div class="nav-menu" style="flex-grow: 0; margin-top: auto;">
+        <ul class="nav-menu" style="margin-top: auto;">
             <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
-        </div>
+        </ul>
     </aside>
 
     <main class="main-content">

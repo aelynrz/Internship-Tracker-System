@@ -7,7 +7,13 @@
 body {
     display: flex;
     font-family: Arial, sans-serif;
-    background: #f3f6f4;
+    background:
+    radial-gradient(
+        circle at top left,
+        rgba(47,111,78,0.3),
+        transparent 80%
+    ),
+    #f4f7f5;
     color: #111;
 }
 
@@ -16,14 +22,32 @@ body {
 ========================= */
 
 .sidebar {
-    width: 260px;
+    width: 280px;
     height: 100vh;
     background: white;
     padding: 36px 22px;
     position: fixed;
-    border-right: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background: linear-gradient(
+        #2f6f4e,
+        #57a773
+    );}
+
+.logo {
+    margin-left: auto;       
+    margin-right: auto;  
+    width: 70px;
+    margin-bottom: 10px;
 }
 
 .brand {
