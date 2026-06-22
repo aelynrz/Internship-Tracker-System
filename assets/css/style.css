@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 :root {
     --bg-color: #f0f1f3;
     --sidebar-bg: #ffffff;
@@ -8,6 +10,7 @@
     --radius-lg: 20px;
     --radius-md: 12px;
 }
+
 .auth-container { 
     display: flex; 
     justify-content: center; 

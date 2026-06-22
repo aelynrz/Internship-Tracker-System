@@ -10,8 +10,27 @@ if (!isset($_SESSION['UserID']) || $_SESSION['Role'] !== 'Student') {
 }
 
 $student_id = $_SESSION['UserID'];
+$user_name = $_SESSION['Name'];
 
-// Get recent applications FOR THIS STUDENT ONLY
+// 1. Dynamically Calculate KPIs
+$total_apps = 0;
+$pending_apps = 0;
+$accepted_apps = 0;
+
+$kpi_query = "SELECT Status, COUNT(*) as count FROM Application WHERE StudentID = ? GROUP BY Status";
+$stmt = $conn->prepare($kpi_query);
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$kpi_result = $stmt->get_result();
+
+while ($row = $kpi_result->fetch_assoc()) {
+    $total_apps += $row["count"];
+    if ($row["Status"] === 'Pending') $pending_apps = $row["count"];
+    if ($row["Status"] === 'Accepted') $accepted_apps = $row["count"];
+}
+$stmt->close();
+
+// 2. Get recent applications
 $query = "
     SELECT a.ApplicationID, c.CompanyName, a.Status, a.SubmissionDate 
     FROM Application a
@@ -50,24 +69,24 @@ $result = $stmt->get_result();
         <header class="top-header">
             <h1 class="page-title">Student Portal</h1>
             <div style="background: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; color: #7a7a7a;">
-                Logged in as: <?php echo htmlspecialchars($_SESSION['Name']); ?>
+                Logged in as: <?php echo htmlspecialchars($user_name); ?>
             </div>
         </header>
 
         <section class="kpi-grid">
             <div class="kpi-card dark">
                 <div class="kpi-title">Total Applications</div>
-                <div class="kpi-value">3</div>
+                <div class="kpi-value"><?php echo $total_apps; ?></div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-title">Interviews</div>
-                <div class="kpi-value">1</div>
+                <div class="kpi-title">Pending</div>
+                <div class="kpi-value"><?php echo $pending_apps; ?></div>
             </div>
 
             <div class="kpi-card">
                 <div class="kpi-title">Offers</div>
-                <div class="kpi-value">0</div>
+                <div class="kpi-value"><?php echo $accepted_apps; ?></div>
             </div>
         </section>
 

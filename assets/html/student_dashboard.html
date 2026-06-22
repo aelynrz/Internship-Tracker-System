@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard - Internship Tracker</title>
+    <link rel="stylesheet" href="assets/css/student.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand"><img src="assets/images/red.svg" class="logo"> InternTrack</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="student_dashboard.html" class="nav-link active">My Dashboard</a></li>
+            <li class="nav-item"><a href="student_companies.html" class="nav-link">Browse Companies</a></li>
+            <li class="nav-item"><a href="student_my_applications.html" class="nav-link">My Applications</a></li>
+        </ul>
+        <ul class="nav-menu" style="margin-top: auto;">
+            <li class="nav-item"><a href="logout.php" class="nav-link">Log out</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <h1 class="page-title">Student Portal</h1>
+            <div style="background: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; color: #7a7a7a;">
+                Logged in as: <span id="displayUserName">Loading...</span>
+            </div>
+        </header>
+
+        <section class="kpi-grid">
+            <div class="kpi-card dark">
+                <div class="kpi-title">Total Applications</div>
+                <div class="kpi-value" id="kpiTotal">-</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">Pending (Interviews)</div>
+                <div class="kpi-value" id="kpiPending">-</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">Offers Accepted</div>
+                <div class="kpi-value" id="kpiOffers">-</div>
+            </div>
+        </section>
+
+        <section class="data-section">
+            <h2 class="section-title">My Recent Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>App ID</th>
+                        <th>Company</th>
+                        <th>Date Applied</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentActivityTable">
+                    <tr><td colspan="4">Loading recent activity...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('api_student_dashboard.php')
+                .then(response => response.json())
+                .then(data => {
+                    // Redirect to login if unauthorized
+                    if (data.error) {
+                        window.location.href = 'index.html';
+                        return;
+                    }
+
+                    // 1. Inject the User Name
+                    document.getElementById('displayUserName').textContent = data.user_name;
+
+                    // 2. Inject the Dynamic KPIs
+                    document.getElementById('kpiTotal').textContent = data.kpis.total;
+                    document.getElementById('kpiPending').textContent = data.kpis.pending;
+                    document.getElementById('kpiOffers').textContent = data.kpis.accepted;
+
+                    // 3. Build the Recent Activity Table
+                    const tableBody = document.getElementById('recentActivityTable');
+                    tableBody.innerHTML = ''; // Clear loading text
+
+                    if (data.recent_activity.length === 0) {
+                        tableBody.innerHTML = "<tr><td colspan='4'>You haven't applied anywhere yet!</td></tr>";
+                        return;
+                    }
+
+                    data.recent_activity.forEach(app => {
+                        // Format the date to match your design (e.g., "16 Jun 2026")
+                        const dateObj = new Date(app.SubmissionDate);
+                        const formattedDate = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                        const statusClass = app.Status.toLowerCase();
+
+                        const row = `
+                            <tr>
+                                <td>#APP-${app.ApplicationID}</td>
+                                <td style="font-weight: 500;">${app.CompanyName}</td>
+                                <td>${formattedDate}</td>
+                                <td><span class="status-badge ${statusClass}">${app.Status}</span></td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                    document.getElementById('recentActivityTable').innerHTML = "<tr><td colspan='4'>Failed to load data.</td></tr>";
+                });
+        });
+    </script>
+</body>
+</html>

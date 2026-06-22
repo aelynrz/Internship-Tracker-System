@@ -95,9 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch registered Companies for dropdowns
+// UPGRADED SQL: Fetch companies AND find out who is assigned to them
 $companies = [];
-$comp_query = $conn->query("SELECT CompanyID, CompanyName FROM Company ORDER BY CompanyName ASC");
+$comp_query = $conn->query("
+    SELECT c.CompanyID, c.CompanyName, u.UserID AS AssignedSupervisor 
+    FROM Company c 
+    LEFT JOIN User u ON c.CompanyID = u.CompanyID AND u.Roles = 'Supervisor' 
+    ORDER BY c.CompanyName ASC
+");
 while ($c = $comp_query->fetch_assoc()) {
     $companies[] = $c;
 }
@@ -196,18 +201,17 @@ $result = $conn->query($query);
                         <td style="display: flex; gap: 10px; align-items: center;">
                             
                             <button type="button" 
-                                    onclick="openEditModal(
-                                        <?php echo $row['UserID']; ?>, 
-                                        '<?php echo addslashes($row['Name']); ?>', 
-                                        '<?php echo addslashes($row['Email']); ?>', 
-                                        '<?php echo $row['Roles']; ?>',
-                                        '<?php echo addslashes($row['MatricNumber'] ?? ''); ?>',
-                                        '<?php echo $row['CGPA'] ?? ''; ?>',
-                                        '<?php echo addslashes($row['Major'] ?? ''); ?>',
-                                        '<?php echo $row['CompanyID'] ?? ''; ?>',
-                                        '<?php echo addslashes($row['ContactNumber'] ?? ''); ?>'
-                                    )" 
-                                    style="background: #e0e0e0; color: #333; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">
+                                class="edit-user-btn"
+                                data-userid="<?php echo $row['UserID']; ?>"
+                                data-name="<?php echo htmlspecialchars($row['Name']); ?>"
+                                data-email="<?php echo htmlspecialchars($row['Email']); ?>"
+                                data-role="<?php echo $row['Roles']; ?>"
+                                data-matric="<?php echo htmlspecialchars($row['MatricNumber'] ?? ''); ?>"
+                                data-cgpa="<?php echo htmlspecialchars($row['CGPA'] ?? ''); ?>"
+                                data-major="<?php echo htmlspecialchars($row['Major'] ?? ''); ?>"
+                                data-companyid="<?php echo htmlspecialchars($row['CompanyID'] ?? ''); ?>"
+                                data-contact="<?php echo htmlspecialchars($row['ContactNumber'] ?? ''); ?>"
+                                style="background: #e0e0e0; color: #333; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">
                                 Edit
                             </button>
                             
@@ -229,6 +233,36 @@ $result = $conn->query($query);
         </section>
     </main>
 
+    <div class="modal-overlay" id="addSupervisorModal">
+        <div class="modal-card">
+            <h2 style="margin-bottom: 20px;">Add New Supervisor</h2>
+            <form method="POST" action="">
+                <input type="hidden" name="action" value="add_supervisor">
+                <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" required></div>
+                <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" required></div>
+                <div class="form-group"><label>Contact Number</label><input type="text" name="contact_number" class="form-control" placeholder="e.g., +60123456789"></div>
+                
+                <div class="form-group">
+                    <label>Assign to Existing Company <span style="color: #7a7a7a; font-weight: normal; font-size: 12px;">(Optional)</span></label>
+                    <select name="company_id" class="form-control">
+                        <option value="">-- Unassigned / No Company --</option>
+                        <?php foreach($companies as $comp): ?>
+                            <?php if(is_null($comp['AssignedSupervisor'])): ?>
+                                <option value="<?php echo $comp['CompanyID']; ?>"><?php echo htmlspecialchars($comp['CompanyName']); ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group"><label>Temporary Password</label><input type="password" name="password" class="form-control" required></div>
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button type="button" onclick="document.getElementById('addSupervisorModal').style.display='none'" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); background: white; border-radius: var(--radius-md); cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: 10px; border: none; background: #4a4a4a; color: white; border-radius: var(--radius-md); cursor: pointer;">Save Supervisor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="addStudentModal">
         <div class="modal-card">
             <h2 style="margin-bottom: 20px;">Add New Student</h2>
@@ -246,34 +280,6 @@ $result = $conn->query($query);
                 <div style="display: flex; gap: 10px; margin-top: 25px;">
                     <button type="button" onclick="document.getElementById('addStudentModal').style.display='none'" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); background: white; border-radius: var(--radius-md); cursor: pointer;">Cancel</button>
                     <button type="submit" style="flex: 1; padding: 10px; border: none; background: var(--accent-dark); color: white; border-radius: var(--radius-md); cursor: pointer;">Save Student</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="addSupervisorModal">
-        <div class="modal-card">
-            <h2 style="margin-bottom: 20px;">Add New Supervisor</h2>
-            <form method="POST" action="">
-                <input type="hidden" name="action" value="add_supervisor">
-                <div class="form-group"><label>Full Name</label><input type="text" name="name" class="form-control" required></div>
-                <div class="form-group"><label>Email Address</label><input type="email" name="email" class="form-control" required></div>
-                <div class="form-group"><label>Contact Number</label><input type="text" name="contact_number" class="form-control" placeholder="e.g., +60123456789"></div>
-                
-                <div class="form-group">
-                    <label>Assign to Existing Company</label>
-                    <select name="company_id" class="form-control" required>
-                        <option value="">-- Select Company --</option>
-                        <?php foreach($companies as $comp): ?>
-                            <option value="<?php echo $comp['CompanyID']; ?>"><?php echo htmlspecialchars($comp['CompanyName']); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group"><label>Temporary Password</label><input type="password" name="password" class="form-control" required></div>
-                <div style="display: flex; gap: 10px; margin-top: 25px;">
-                    <button type="button" onclick="document.getElementById('addSupervisorModal').style.display='none'" style="flex: 1; padding: 10px; border: 1px solid var(--border-color); background: white; border-radius: var(--radius-md); cursor: pointer;">Cancel</button>
-                    <button type="submit" style="flex: 1; padding: 10px; border: none; background: #4a4a4a; color: white; border-radius: var(--radius-md); cursor: pointer;">Save Supervisor</button>
                 </div>
             </form>
         </div>
@@ -301,11 +307,13 @@ $result = $conn->query($query);
 
                 <div id="dynamic_supervisor_fields" style="display: none;">
                     <div class="form-group">
-                        <label>Assigned Company</label>
+                        <label>Assigned Company <span style="color: #7a7a7a; font-weight: normal; font-size: 12px;">(Optional)</span></label>
                         <select name="company_id" id="edit_company_id" class="form-control">
-                            <option value="">-- Select Company --</option>
+                            <option value="">-- Unassigned / No Company --</option>
                             <?php foreach($companies as $comp): ?>
-                                <option value="<?php echo $comp['CompanyID']; ?>"><?php echo htmlspecialchars($comp['CompanyName']); ?></option>
+                                <option value="<?php echo $comp['CompanyID']; ?>" data-assigned="<?php echo $comp['AssignedSupervisor'] ?? ''; ?>">
+                                    <?php echo htmlspecialchars($comp['CompanyName']); ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -320,6 +328,78 @@ $result = $conn->query($query);
             </form>
         </div>
     </div>
-    <script src="assets/js/admin_users.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const editButtons = document.querySelectorAll('.edit-user-btn');
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    
+                    const userId = this.getAttribute('data-userid');
+                    const name = this.getAttribute('data-name');
+                    const email = this.getAttribute('data-email');
+                    const role = this.getAttribute('data-role');
+                    const matric = this.getAttribute('data-matric');
+                    const cgpa = this.getAttribute('data-cgpa');
+                    const major = this.getAttribute('data-major');
+                    const companyId = this.getAttribute('data-companyid');
+                    const contact = this.getAttribute('data-contact');
+
+                    document.getElementById('edit_user_id').value = userId;
+                    document.getElementById('edit_name').value = name;
+                    document.getElementById('edit_email').value = email;
+                    document.getElementById('edit_role').value = role;
+                    document.getElementById('edit_contact_number').value = contact;
+
+                    const studentFields = document.getElementById('dynamic_student_fields');
+                    const supervisorFields = document.getElementById('dynamic_supervisor_fields');
+
+                    studentFields.style.display = 'none';
+                    supervisorFields.style.display = 'none';
+
+                    if (role === 'Student') {
+                        studentFields.style.display = 'block';
+                        document.getElementById('edit_matric').value = matric;
+                        document.getElementById('edit_cgpa').value = cgpa;
+                        document.getElementById('edit_major').value = major;
+                        
+                    } else if (role === 'Supervisor') {
+                        supervisorFields.style.display = 'block';
+                        
+                        // SMART DROPDOWN LOGIC: Disable companies that belong to OTHER supervisors
+                        const companySelect = document.getElementById('edit_company_id');
+                        Array.from(companySelect.options).forEach(option => {
+                            const assignedUser = option.getAttribute('data-assigned');
+                            
+                            // If it's assigned to someone AND that someone is NOT the user we are currently editing
+                            if (assignedUser && assignedUser !== userId && option.value !== "") {
+                                option.disabled = true;
+                                if (!option.text.includes('(Assigned)')) option.text += ' (Assigned)';
+                            } else {
+                                option.disabled = false;
+                                option.text = option.text.replace(' (Assigned)', '');
+                            }
+                        });
+                        
+                        document.getElementById('edit_company_id').value = companyId;
+                    }
+
+                    document.getElementById('editUserModal').style.display = 'flex';
+                });
+            });
+        });
+
+        window.onclick = function(event) {
+            const addStudentModal = document.getElementById('addStudentModal');
+            const addSupervisorModal = document.getElementById('addSupervisorModal');
+            const editUserModal = document.getElementById('editUserModal');
+
+            if (event.target == addStudentModal) addStudentModal.style.display = 'none';
+            if (event.target == addSupervisorModal) addSupervisorModal.style.display = 'none';
+            if (event.target == editUserModal) editUserModal.style.display = 'none';
+        };
+    </script>
 </body>
 </html>
