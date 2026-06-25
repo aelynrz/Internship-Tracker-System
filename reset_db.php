@@ -118,3 +118,53 @@ $conn->query("INSERT INTO Application (StudentID, CompanyID, Status, SubmissionD
 // 8. Success Message UI
 echo "Data importation into databse : SUCCESSFUL<br>";
 echo "Default password for all accounts: yx123<br>";
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Reset</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap');
+        
+        .reset-actions {
+            margin-top: 30px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn-user {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .btn-admin {
+            background-color: #2e7d32; /* A nice green to match your theme */
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-actions">
+        <a href="login.php" class="btn btn-user">Go to User Login</a>
+        <a href="admin_login.php" class="btn btn-admin">Go to Admin Login</a>
+    </div>
+</body>
+</html>
