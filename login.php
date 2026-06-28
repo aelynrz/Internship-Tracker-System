@@ -6,10 +6,16 @@ require_once 'db_connect.php';
 // If already logged in, redirect to respective dashboard
 if (isset($_SESSION['UserID'])) {
     $role = $_SESSION['Role'];
-    if ($role === 'Admin') {
-        header("Location: admin_dashboard.php");
+    
+    if ($role === 'Supervisor') {
+        header("Location: supervisor_dashboard.php");
+    } elseif ($role === 'Student') {
+        header("Location: student_dashboard.php");
     } else {
-        header("Location: " . strtolower($role) . "_dashboard.php");
+        // STRICT FALLBACK: If an Admin (or unknown role) tries to use this page, 
+        // immediately destroy their session and kick them back to the login screen.
+        session_destroy();
+        header("Location: login.php");
     }
     exit();
 }
